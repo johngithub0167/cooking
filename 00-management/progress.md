@@ -25,7 +25,7 @@
 
 - 运维侧（OPS-001~004、010~013）**全部完成**，可在 Windows 上一键拉起整套服务（后端 3000 + MySQL 容器 3307）。
 - 仓库已 `git init`（`main`）并完成**首次提交 `9e31ba4`**（48 个文件）；`git status` 干净，`git ls-files` 复查无 `.env` / `node_modules` / `uploads` / `logs` / `backups` 入库。远端未关联，需要时自行 `git remote add origin <地址>` + `git push -u origin main`（脚本不代劳）。
-- 技术方案（ARCH-005）仍待用户评审；BE-001~003 已完成，FE-001/FE-002 已开发并通过用户验收，后端 Dockerfile 落地后可启用 `docker-compose.yml` 的 `full` profile。
+- 技术方案（ARCH-005）仍待用户评审；BE-001~003 已完成，FE-001/FE-002 已开发并通过用户验收；已安装 NVM for Windows 并切换 Node 20.19.5 LTS，FE-001/FE-002 生产构建复测通过。后端 Dockerfile 落地后可启用 `docker-compose.yml` 的 `full` profile。
 
 ### FE-001 C 端工程初始化（已验收）
 
@@ -45,8 +45,19 @@
 | 开发服务 | `8081`，`/api` 代理到 `http://localhost:3000` |
 | 基础能力 | 登录/布局/首页/菜品/分类/记录路由骨架、侧边导航、Token 请求封装、1001 清 Token 跳登录、Vuex 鉴权状态 |
 | 验证 | `npm install` 成功；`npm run serve -- --port 8081` 返回 HTTP 200；开发编译通过（无业务错误） |
-| 环境阻塞 | `npm run build` 在本机 Node v21.7.3 下触发原生 `Fatal process out of memory: Zone`，即使关闭 parallel 并提高 Node 堆上限仍复现；未伪报成功 |
+| 验证 | 在 Node 20.19.5 LTS 下 `npm run build` 退出码 0；此前 Node 21.7.3 的 `Fatal process out of memory: Zone` 已不再复现。仅有 Webpack 体积/性能建议警告，不阻塞构建 |
 | 范围边界 | 未实现登录接口、菜品/分类/上传/记录业务，分别留给 AD-010、AD-012~016 |
+
+### Node 版本切换与前端构建复测（2026-09-25）
+
+| 项目 | 结果 |
+| --- | --- |
+| NVM | 已安装 nvm-windows 1.2.1；`nvm current` = `v20.19.5` |
+| Node/npm | Node `v20.19.5` / npm `10.8.2`；Node 20 为当前项目默认运行版本 |
+| C 端构建 | `03-frontend/mobile` 执行 `npm run build`，退出码 0 |
+| 后台构建 | `03-frontend/admin` 执行 `npm run build`，退出码 0 |
+| 原问题 | Node 21.7.3 下的 `Fatal process out of memory: Zone` 已消失；当前仅保留 Webpack 体积/性能建议警告 |
+| 切换命令 | `nvm list`、`nvm use 20.19.5`、`nvm current` |
 
 ### 下一步
 
@@ -139,8 +150,21 @@
 
 - ~~**本机未安装 Git**~~ → 已解决：Git 2.30.2 装在 `E:\software\Git`（未进 PATH，脚本自动探测）；仓库已 init 并完成首次提交 `9e31ba4`。
 - ~~**本机未安装 MySQL**~~ → 已解决：Docker 容器 `cooking-mysql`（MySQL 8）已 healthy，宿主 3307 → 容器 3306。
-- Node 实测 **v21.7.3**，架构要求 18/20 LTS（风险 T-03）；脚本仅告警不阻断，遇 `ERR_OSSL_EVP_UNSUPPORTED` 加 `-LegacyOpenSsl`。
-- 项目当前无任何业务代码，工程尚未初始化。
-- 技术方案（架构 / 表结构 / 接口）尚未经用户评审，评审通过后再开工。
+- Node 实测 **v21.7.3**，架构要求 18/20 LTS（风险 T-03）；脚本仅告警不阻断，遇 `ERR_OSSL_EVP_UNSUPPORTED` 加 `-LegacyOpenSsl`。admin 生产构建已受本机 Node 内存异常影响，建议统一到 Node 18/20 LTS。
 - sharp（图片缩略图）在 Windows 上可能安装失败，已设计降级方案。
-- 种子菜品数据图片留空，前端需占位图。
+- ARCH-005（技术方案评审）未正式签字，但实际已按方案开工，建议补一次快速确认或直接关闭该卡点。
+
+## 2026-09-25 工程初始化完成（Gate 1）
+
+已完成并通过验证：OPS-001~004、OPS-010~013、BE-001~003、FE-001、FE-002。
+
+- Git：6 次提交，工作区干净；`.gitignore` 覆盖 `.env` / `node_modules` / `**/uploads/*` / `**/logs/*` / `06-devops/backups/`。
+- 后端：`04-backend/server` 完成 Express 4 + Sequelize 6 + mysql2 骨架，7 张表 migration 已执行，统一响应/错误码/日志就绪，`GET /api/health` 验证返回 `db=up`。
+- C 端：`03-frontend/mobile`（Vue 2.7 + Vant 2 + router + vuex + axios）骨架完成并 `dist` 构建成功。
+- 后台：`03-frontend/admin`（Vue 2.7 + Element UI 2）骨架完成，8081 开发服务验证通过。
+
+### 已识别缺口（下一步必须补）
+
+1. **缺 `src/models/`（Sequelize 模型）** —— 目前只有 migration，业务接口 BE-010+ 需要模型层，需在 BE-004 或之前补齐。
+2. **缺 seeders（BE-016 种子数据）** —— 表已建好，随时可跑；建议优先做，前端联调才有真实数据。
+3. `progress.md` 历史遗留描述已过时，本段为最新结论。

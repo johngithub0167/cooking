@@ -51,11 +51,11 @@
 | BE-003 | 统一响应格式、错误处理、日志中间件 | 后端 | BE-001 | 已完成（2026-09-25，错误码与文档一致） |
 | BE-004 | 管理员鉴权（登录、Token、中间件） | 后端 | BE-001 | 待开始（下一个） |
 | FE-001 | 初始化 C 端 Vue 2 + Vant 工程 | 前端 | ARCH-005 | 已完成（2026-09-25，用户验收通过；提交 `284df9a`） |
-| FE-002 | 初始化后台 Vue 2 + Element UI 工程 | 前端 | ARCH-005 | 已完成（2026-09-25，用户验收通过；8081 开发服务验证通过，生产构建受本机 Node 内存异常影响） |
+| FE-002 | 初始化后台 Vue 2 + Element UI 工程 | 前端 | ARCH-005 | 已完成（2026-09-25，用户验收通过；Node 20.19.5 下 8081 开发服务与生产构建均通过） |
 | FE-003 | 封装统一请求层与错误提示 | 前端 | FE-001、FE-002 | 待开始 |
 
 > **OPS-001~004 备注（2026-09-24 晚更新）**
-> - **本机环境已落实**：Git 2.30.2（`E:\software\Git`，未进 PATH 时脚本自动探测）、Docker Desktop 20.10.22 / Compose v2.15.1、Node v21.7.3（非 LTS，仅告警）。
+> - **本机环境已落实**：Git 2.30.2（`E:\software\Git`，未进 PATH 时脚本自动探测）、Docker Desktop 20.10.22 / Compose v2.15.1、NVM for Windows 1.2.1、Node v20.19.5 LTS（可用 `nvm use` 切换；旧 Node v21.7.3 仍保留但不再作为项目默认版本）。
 > - OPS-001：根目录 `.gitignore` + `.gitattributes` 已生效；仓库已 `git init`（分支 `main`）、`git add -A` 完成，两道体检通过：暂存区无 `.env` / `node_modules` / `uploads` / `logs` / `dist` / `mysql-data`，5 条关键路径 `git check-ignore` 全部命中。**首次提交已完成**（`9e31ba4`，48 个文件，工作区干净，无敏感文件入库）。踩坑记录：含斜杠的模式（`uploads/*`）会被锚定到仓库根，必须写成 `**/uploads/*` 才能匹配子目录。脚本默认只 add 不 commit、不自动改 git 配置、不自动 push，提交需显式加 `-Commit`。
 > - OPS-002：`06-devops/.env.example` 逐项说明用途 / 是否必填 / 默认值 / 注意事项，作为**唯一模板来源**；`scripts/init-env.ps1` 一键生成本机 `.env`（随机口令 + JWT）。
 > - OPS-003：`start-dev.ps1`（+ 双击入口 `start-dev.cmd`）与 `stop-dev.ps1` 已跑通；3307 无监听时会自动 `docker compose up -d mysql`。
