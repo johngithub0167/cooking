@@ -1,0 +1,57 @@
+:root {
+  --page-background: #f7f8fa;
+  --text-primary: #323233;
+  --text-secondary: #969799;
+  --brand-color: #ee0a24;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+html,
+body,
+#app {
+  min-height: 100%;
+  margin: 0;
+}
+
+body {
+  min-width: 320px;
+  background: var(--page-background);
+  color: var(--text-primary);
+  font-family: -apple-system, BlinkMacSystemFont, "Helvetica Neue", Arial, sans-serif;
+  -webkit-font-smoothing: antialiased;
+}
+
+button,
+a {
+  -webkit-tap-highlight-color: transparent;
+}
+
+.page {
+  min-height: 100vh;
+  padding-bottom: calc(56px + env(safe-area-inset-bottom));
+}
+
+.page__content {
+  padding: 16px;
+}
+
+.page__title {
+  margin: 0 0 8px;
+  font-size: 22px;
+  line-height: 30px;
+}
+
+.page__hint {
+  margin: 0;
+  color: var(--text-secondary);
+  font-size: 14px;
+  line-height: 22px;
+}
+
+.page__card {
+  margin-top: 16px;
+  border-radius: 8px;
+}

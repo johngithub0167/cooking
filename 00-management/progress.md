@@ -25,14 +25,23 @@
 
 - 运维侧（OPS-001~004、010~013）**全部完成**，可在 Windows 上一键拉起整套服务（后端 3000 + MySQL 容器 3307）。
 - 仓库已 `git init`（`main`）并完成**首次提交 `9e31ba4`**（48 个文件）；`git status` 干净，`git ls-files` 复查无 `.env` / `node_modules` / `uploads` / `logs` / `backups` 入库。远端未关联，需要时自行 `git remote add origin <地址>` + `git push -u origin main`（脚本不代劳）。
-- 技术方案（ARCH-005）仍待用户评审；BE-001 / FE-001 尚未开工，后端 Dockerfile 落地后可启用 `docker-compose.yml` 的 `full` profile。
+- 技术方案（ARCH-005）仍待用户评审；BE-001~003 已完成，FE-001 已完成开发并待用户验收，后端 Dockerfile 落地后可启用 `docker-compose.yml` 的 `full` profile。
+
+### FE-001 C 端工程初始化（待验收）
+
+| 项目 | 结果 |
+| --- | --- |
+| 工程 | `03-frontend/mobile`：Vue CLI 5 + Vue 2.7 + Vant 2 + vue-router 3 + Vuex 3 + axios |
+| 开发服务 | `8080`，`/api` 代理到 `http://localhost:3000` |
+| 基础能力 | 四路由 Tabbar（首页 / 总菜单 / 今日菜单 / 历史）、统一请求封装、今日菜单 Vuex + `cooking:cart:v1` localStorage |
+| 验证 | `npm install` 成功；`npm run build` 退出码 0；开发服务器 `http://localhost:8080/` 返回 HTTP 200 |
+| 范围边界 | 未实现具体业务页面、未使用 mock 数据；业务页面留给 FE-010~FE-017 |
 
 ### 下一步
 
-1. 用户评审并冻结技术方案（ARCH-005）；
-2. BE-001 后端骨架 + Dockerfile → 打通 `npm run dev` 的真实后端启动；
-3. FE-001 / FE-002 前端工程初始化；
-4. 后端接口 BE-010~016 → 前端页面 → 测试 TEST-001~006 → 交付 DELIVERY-001。
+1. 用户验收 FE-001；
+2. FE-002 后台 Vue 2 + Element UI 工程初始化；
+3. 后端接口 BE-010~016 → C 端页面 FE-010~017 → 测试 TEST-001~006 → 交付 DELIVERY-001。
 
 ## 2026-09-24
 
