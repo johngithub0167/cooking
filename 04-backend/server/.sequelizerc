@@ -1,0 +1,17 @@
+/**
+ * sequelize-cli 路径配置（BE-002 起使用）
+ *
+ * 默认 CLI 会找项目根下的 config/ models/ migrations/ seeders/，
+ * 这里统一指到 src/ 下，与 technical-architecture.md 第 3 节目录结构保持一致。
+ *
+ * 注意：本工程不维护 04-backend/server/.env.example，
+ * 环境变量模板的唯一来源是 06-devops/.env.example。
+ */
+const path = require('path');
+
+module.exports = {
+  config: path.resolve(__dirname, 'src/config/sequelize-cli.js'),
+  'models-path': path.resolve(__dirname, 'src/models'),
+  'migrations-path': path.resolve(__dirname, 'src/migrations'),
+  'seeders-path': path.resolve(__dirname, 'src/seeders')
+};

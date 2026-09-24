@@ -1,7 +1,7 @@
 # 任务看板
 
 > 项目：家庭点菜小程序（cooking）
-> 当前阶段：需求已冻结（PRD v1.0），技术设计进行中
+> 当前阶段：需求已冻结（PRD v1.0），技术方案待评审（ARCH-005 仍是卡点）；工程初始化与后端骨架 BE-001~003 已完成
 > 更新时间：2026-09-25
 
 ## 状态说明
@@ -34,6 +34,8 @@
 | ARCH-004 | 前后端协作边界与 Mock 约定 | 技术负责人 | ARCH-003 | 已完成（写入 api-design.md 第 4 节） |
 | ARCH-005 | **用户评审并冻结技术方案** | 用户 | ARCH-003 | **待开始（当前卡点）** |
 
+> 说明：BE-001~003 已在用户指示下先行开工，实现严格沿用已冻结的接口定义与表结构，**未改任何已冻结字段**；若评审结论有变更，再按结论调整实现并更新文档。
+
 ---
 
 ## 阶段三：工程初始化
@@ -42,12 +44,12 @@
 | --- | --- | --- | --- | --- |
 | OPS-001 | 初始化 Git 仓库与 `.gitignore` | 运维 | ARCH-005 | 已完成（2026-09-24） |
 | OPS-002 | 编写 `.env.example` 与配置说明 | 运维 | ARCH-005 | 已完成（2026-09-24） |
-| OPS-003 | 编写本地启动脚本（一键启动前后端） | 运维 | ARCH-005 | 已完成（2026-09-24，端到端拉起待 BE-001 落地） |
+| OPS-003 | 编写本地启动脚本（一键启动前后端） | 运维 | ARCH-005 | 已完成（2026-09-25 端到端拉起已验证：`npm run dev` → `/api/health` 通过） |
 | OPS-004 | 编写 Docker Compose 部署方案（待确认 Q-11） | 运维 | ARCH-005 | 已完成（2026-09-24） |
-| BE-001 | 初始化 Node.js 后端工程骨架 | 后端 | ARCH-005 | 待开始 |
-| BE-002 | 数据库连接与迁移方案 | 后端 | BE-001、ARCH-002 | 待开始 |
-| BE-003 | 统一响应格式、错误处理、日志中间件 | 后端 | BE-001 | 待开始 |
-| BE-004 | 管理员鉴权（登录、Token、中间件） | 后端 | BE-001 | 待开始 |
+| BE-001 | 初始化 Node.js 后端工程骨架 | 后端 | ARCH-005 | 已完成（2026-09-25） |
+| BE-002 | 数据库连接与迁移方案 | 后端 | BE-001、ARCH-002 | 已完成（2026-09-25，7 张表已建） |
+| BE-003 | 统一响应格式、错误处理、日志中间件 | 后端 | BE-001 | 已完成（2026-09-25，错误码与文档一致） |
+| BE-004 | 管理员鉴权（登录、Token、中间件） | 后端 | BE-001 | 待开始（下一个） |
 | FE-001 | 初始化 C 端 Vue 2 + Vant 工程 | 前端 | ARCH-005 | 待开始 |
 | FE-002 | 初始化后台 Vue 2 + Element UI 工程 | 前端 | ARCH-005 | 待开始 |
 | FE-003 | 封装统一请求层与错误提示 | 前端 | FE-001、FE-002 | 待开始 |
@@ -60,13 +62,22 @@
 > - OPS-004：`06-devops/docker-compose.yml` 已落地并通过实拉镜像验证——MySQL 8 容器 `cooking-mysql` **healthy**，宿主 3307 → 容器 3306，named volume `cooking-mysql-data`；后端 `server` 服务挂在 `full` profile 下，待 BE-001 产出 Dockerfile 后启用。
 > - 工程经验已固化到 `06-devops/scripts/ops-common.ps1`：所有原生命令（docker / git / npm / node）走 `Invoke-Native`，避免 PS 5.1 把 stderr 当致命错误；`.ps1` 一律 UTF-8 **带 BOM** + CRLF（`npm run ops:check -- -Fix` 可自检自修）。
 
+> **BE-001~003 备注（2026-09-25，后端）**
+> - 开工前置检查（用户要求）：MySQL 8 容器 `cooking-mysql` healthy、库 `cooking` 存在且为空、业务账号 `cooking`@`%` 对该库有 `ALL PRIVILEGES`、容器内与宿主 `127.0.0.1:3307` 双向登录均成功。**未改动任何数据库配置**。
+> - BE-001：工程落在 `04-backend/server`，严格按架构 §3 分层（route → controller → service）。交付配置读取（`src/config/index.js`，dotenv + 必填校验，零硬编码）、Sequelize 6 连接（`src/config/database.js`）、统一响应（`src/utils/response.js`）、统一错误（`src/utils/errors.js`）、请求日志（morgan → logger）、`GET /api/health`。依赖：`express 4.22.3 / sequelize 6.37.8 / mysql2 3.24.4 / dotenv / cors / morgan`，dev：`nodemon / sequelize-cli`（`jsonwebtoken / bcryptjs / multer / express-validator` 留到 BE-004/010/012）。
+> - BE-002：7 个 migration（categories → dishes → ingredients → dish_ingredients → menu_records → menu_items → admins），每个都实现 `down`。实测结果与 `database-design.md` §2/§3 逐项一致：列类型 / 可空 / 默认值、10 个索引（含 3 个唯一）、4 个外键（`fk_dish_category` SET NULL，其余 CASCADE；`menu_items.dish_id` 按约定不加外键）、7 张表均 `utf8mb4_unicode_ci`；级联行为真机演练通过；`db:migrate:undo:all` 逆序回滚成功并已重建。
+> - BE-003：9 个错误码与 `api-design.md` §1.2 逐行一致；新增 `scripts/verify-error-codes.js`（`npm run verify:errors`），用真实 HTTP 请求断言「错误码 → HTTP 状态 → 响应结构」，development / production 均 **14/14 PASS**，生产模式不泄漏原始错误与堆栈。
+> - 端到端：`npm run dev`（nodemon）可正常拉起，`http://localhost:3000/api/health` 返回 `code=0 / db=up`。
+> - 待确认（已按默认执行，可回滚调整）：① 不新建 `04-backend/server/.env.example`（模板唯一来源仍是 `06-devops/.env.example`）；② `/api/health` 未在 api-design 的 15 个业务接口内，DB 不可用返回 HTTP 500 + code 5000；③ 新增 `scripts/` 目录用于自检（架构 §3 未列）；④ `created_at/updated_at` NOT NULL 无默认值（沿用文档，模型层自动填充）。
+> - **尚未做**：`src/models/*` 模型定义（架构 §3 有列，表已建好，建议 BE-010 前补齐）、后端 Dockerfile（OPS-004 的 `full` profile 待它启用）。
+
 ---
 
 ## 阶段四：后端开发
 
 | 编号 | 任务 | 负责人 | 依赖 | 状态 |
 | --- | --- | --- | --- | --- |
-| BE-010 | 分类接口（增删改查、排序） | 后端 | BE-002 | 待开始 |
+| BE-010 | 分类接口（增删改查、排序） | 后端 | BE-002、模型层 | 待开始（需先补 `src/models/*`） |
 | BE-011 | 菜品接口（增删改查、上下架、筛选、分页） | 后端 | BE-010 | 待开始 |
 | BE-012 | 图片上传接口（格式/大小校验、存储、缩略图） | 后端 | BE-001 | 待开始 |
 | BE-013 | 菜品查询接口（列表、详情、搜索） | 后端 | BE-011 | 待开始 |
