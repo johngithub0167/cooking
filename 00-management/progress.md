@@ -24,7 +24,7 @@
 ### 当前状态（2026-09-25）
 
 - 运维侧（OPS-001~004、010~013）**全部完成**，可在 Windows 上一键拉起整套服务（后端 3000 + MySQL 容器 3307）。
-- 仓库已 `git init`（`main`）并完成暂存与敏感文件体检，**首次提交待人工确认执行**：`npm run ops:git-init -- -Commit`（脚本默认不提交、不自动 push）。
+- 仓库已 `git init`（`main`）并完成**首次提交 `9e31ba4`**（48 个文件）；`git status` 干净，`git ls-files` 复查无 `.env` / `node_modules` / `uploads` / `logs` / `backups` 入库。远端未关联，需要时自行 `git remote add origin <地址>` + `git push -u origin main`（脚本不代劳）。
 - 技术方案（ARCH-005）仍待用户评审；BE-001 / FE-001 尚未开工，后端 Dockerfile 落地后可启用 `docker-compose.yml` 的 `full` profile。
 
 ### 下一步
@@ -117,7 +117,7 @@
 
 ### 遗留问题
 
-- ~~**本机未安装 Git**~~ → 已解决：Git 2.30.2 装在 `E:\software\Git`（未进 PATH，脚本自动探测）；仓库已 init + add + 体检通过，**首次提交待执行** `npm run ops:git-init -- -Commit`。
+- ~~**本机未安装 Git**~~ → 已解决：Git 2.30.2 装在 `E:\software\Git`（未进 PATH，脚本自动探测）；仓库已 init 并完成首次提交 `9e31ba4`。
 - ~~**本机未安装 MySQL**~~ → 已解决：Docker 容器 `cooking-mysql`（MySQL 8）已 healthy，宿主 3307 → 容器 3306。
 - Node 实测 **v21.7.3**，架构要求 18/20 LTS（风险 T-03）；脚本仅告警不阻断，遇 `ERR_OSSL_EVP_UNSUPPORTED` 加 `-LegacyOpenSsl`。
 - 项目当前无任何业务代码，工程尚未初始化。

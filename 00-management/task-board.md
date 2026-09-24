@@ -54,7 +54,7 @@
 
 > **OPS-001~004 备注（2026-09-24 晚更新）**
 > - **本机环境已落实**：Git 2.30.2（`E:\software\Git`，未进 PATH 时脚本自动探测）、Docker Desktop 20.10.22 / Compose v2.15.1、Node v21.7.3（非 LTS，仅告警）。
-> - OPS-001：根目录 `.gitignore` + `.gitattributes` 已生效；仓库已 `git init`（分支 `main`）、`git add -A` 完成，两道体检通过：暂存区无 `.env` / `node_modules` / `uploads` / `logs` / `dist` / `mysql-data`，5 条关键路径 `git check-ignore` 全部命中。**首次提交待人工确认**（`npm run ops:git-init -- -Commit`；脚本默认只 add 不 commit，不自动改 git 配置、不自动 push）。踩坑记录：含斜杠的模式（`uploads/*`）会被锚定到仓库根，必须写成 `**/uploads/*` 才能匹配子目录。
+> - OPS-001：根目录 `.gitignore` + `.gitattributes` 已生效；仓库已 `git init`（分支 `main`）、`git add -A` 完成，两道体检通过：暂存区无 `.env` / `node_modules` / `uploads` / `logs` / `dist` / `mysql-data`，5 条关键路径 `git check-ignore` 全部命中。**首次提交已完成**（`9e31ba4`，48 个文件，工作区干净，无敏感文件入库）。踩坑记录：含斜杠的模式（`uploads/*`）会被锚定到仓库根，必须写成 `**/uploads/*` 才能匹配子目录。脚本默认只 add 不 commit、不自动改 git 配置、不自动 push，提交需显式加 `-Commit`。
 > - OPS-002：`06-devops/.env.example` 逐项说明用途 / 是否必填 / 默认值 / 注意事项，作为**唯一模板来源**；`scripts/init-env.ps1` 一键生成本机 `.env`（随机口令 + JWT）。
 > - OPS-003：`start-dev.ps1`（+ 双击入口 `start-dev.cmd`）与 `stop-dev.ps1` 已跑通；3307 无监听时会自动 `docker compose up -d mysql`。
 > - OPS-004：`06-devops/docker-compose.yml` 已落地并通过实拉镜像验证——MySQL 8 容器 `cooking-mysql` **healthy**，宿主 3307 → 容器 3306，named volume `cooking-mysql-data`；后端 `server` 服务挂在 `full` profile 下，待 BE-001 产出 Dockerfile 后启用。

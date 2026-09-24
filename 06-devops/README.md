@@ -4,7 +4,7 @@
 > 范围：Git 初始化、环境变量模板、一键启动脚本、Docker Compose、部署 / 备份 / 回滚 / 发布检查方案
 > 端口约定：后端 3000、C 端 dev 8080、后台 dev 8081、MySQL 3306（**容器对外映射 3307**）
 > 更新时间：2026-09-25
-> 任务状态：OPS-001 / 002 / 003 / 004 / 010 / 011 / 012 / 013 已完成（OPS-001 的首次提交待你确认执行，见 §7）
+> 任务状态：OPS-001 / 002 / 003 / 004 / 010 / 011 / 012 / 013 已完成（首次提交 `9e31ba4` 已创建）
 
 ---
 
@@ -205,7 +205,7 @@ Copy-Item .\06-devops\.env.example .\04-backend\server\.env
 
 | 编号 | 任务 | 交付物 | 状态 |
 | --- | --- | --- | --- |
-| OPS-001 | Git 仓库与 `.gitignore` | `.gitignore`、`.gitattributes`、`scripts/git-init.ps1` | 已完成（已 `git init` + `add` + 敏感文件体检通过；**首次提交待确认**：`npm run ops:git-init -- -Commit`） |
+| OPS-001 | Git 仓库与 `.gitignore` | `.gitignore`、`.gitattributes`、`scripts/git-init.ps1` | 已完成（`main` 分支，首次提交 `9e31ba4`，48 个文件，敏感文件体检通过） |
 | OPS-002 | 环境变量模板 | `.env.example` + `scripts/init-env.ps1` | 已完成 |
 | OPS-003 | 一键启动脚本 | `start-dev.ps1`（+ `.cmd` 入口）、`stop-dev.ps1` | 已完成 |
 | OPS-004 | Docker Compose | `docker-compose.yml`（MySQL 3307 + `full` profile 的 server） | 已完成 |
