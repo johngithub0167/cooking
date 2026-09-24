@@ -6,6 +6,7 @@
     1. 检查本机是否已安装 Git（本机当前未安装时会给出安装命令并退出）
     2. 初始化仓库，默认分支 main
     3. 首次 git add，并强制校验 .env / node_modules / uploads / logs 不得入库
+       （例外：.gitkeep 占位文件不算敏感文件，.gitignore 刻意用 ! 规则保留了它们）
     4. 校验 .gitignore 规则是否生效
     5. 默认只 add 不 commit，确认无敏感文件后加 -Commit 再提交
 
@@ -103,6 +104,10 @@ if ($LASTEXITCODE -ne 0) { Write-Err "git add 失败"; exit 2 }
 $staged = Invoke-Native -Exe $gitExe -Arguments @('ls-files')
 $forbidden = @()
 foreach ($f in $staged) {
+    # 例外：.gitignore 里用 !**/uploads/.gitkeep、!**/logs/.gitkeep 刻意保留了占位文件，
+    # 目的是让空目录（uploads/、logs/）也能进仓库。它不是运行时产物，不算敏感文件。
+    if ($f -match '(^|/)\.gitkeep$') { continue }
+
     if ($f -match '(^|/)\.env$' -or
         $f -match '(^|/)node_modules/' -or
         $f -match '(^|/)uploads/[^/]+' -or
