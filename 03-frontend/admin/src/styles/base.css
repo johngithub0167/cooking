@@ -1,0 +1,38 @@
+* {
+  box-sizing: border-box;
+}
+
+html,
+body,
+#app {
+  height: 100%;
+  margin: 0;
+}
+
+body {
+  min-width: 1024px;
+  color: #303133;
+  font-family: Helvetica Neue, Helvetica, Arial, sans-serif;
+  -webkit-font-smoothing: antialiased;
+}
+
+.admin-layout {
+  display: flex;
+  min-height: 100%;
+  background: #f5f7fa;
+}
+
+.admin-sidebar {
+  width: 220px;
+  flex: 0 0 220px;
+  background: #304156;
+}
+
+.admin-main {
+  flex: 1;
+  min-width: 0;
+}
+
+.admin-content {
+  padding: 20px;
+}
