@@ -1,0 +1,95 @@
+# ===========================================
+# cooking 本地 / 单机部署编排（OPS-004）
+# ===========================================
+#
+# 【两条用法】
+#   1. 只要数据库（日常开发最常用）：
+#        docker compose up -d mysql           # 宿主机 3307 -> 容器 3306
+#      后端仍在本机用 npm run dev 跑，方便断点调试与热更新。
+#
+#   2. 连后端一起用容器跑（需 BE-001 已产出 04-backend/server/package.json 与 Dockerfile）：
+#        docker compose --profile full up -d --build
+#
+# 【环境变量】自动读取同目录的 06-devops/.env（该文件已被 .gitignore 忽略，真实密码不会入库）
+#   首次使用请先生成：powershell -ExecutionPolicy Bypass -File .\06-devops\scripts\init-env.ps1
+#
+# 【端口】宿主机 3307 -> 容器 3306；后端 3000 -> 3000。容器内部互联一律用服务名 mysql:3306。
+# 【数据持久化】named volume cooking-mysql-data；docker compose down 不会丢数据，down -v 才会删卷。
+# ===========================================
+
+services:
+  # ---------------- MySQL 8 ----------------
+  mysql:
+    image: mysql:8.0
+    container_name: cooking-mysql
+    restart: unless-stopped
+    ports:
+      # 宿主机 3307，规避本机已装 MySQL 占用 3306 的场景（风险 T-02）
+      - '3307:3306'
+    environment:
+      # 关键变量缺失时直接报错退出，避免“容器起来了但账号是空密码”的低级事故
+      MYSQL_ROOT_PASSWORD: ${MYSQL_ROOT_PASSWORD:?请先在 06-devops/.env 中设置 MYSQL_ROOT_PASSWORD}
+      MYSQL_DATABASE: ${MYSQL_DATABASE:-cooking}
+      MYSQL_USER: ${MYSQL_USER:-cooking}
+      MYSQL_PASSWORD: ${MYSQL_PASSWORD:?请先在 06-devops/.env 中设置 MYSQL_PASSWORD}
+      TZ: Asia/Shanghai
+    command:
+      # 统一 utf8mb4，避免 emoji / 四字节字符入库报错
+      - --character-set-server=utf8mb4
+      - --collation-server=utf8mb4_unicode_ci
+      - --default-time-zone=+08:00
+    volumes:
+      - mysql-data:/var/lib/mysql
+    healthcheck:
+      # $$ 是 compose 的转义写法，实际在容器里展开为 $MYSQL_ROOT_PASSWORD
+      test:
+        [
+          'CMD-SHELL',
+          'mysqladmin ping -h 127.0.0.1 -uroot -p"$$MYSQL_ROOT_PASSWORD" --silent',
+        ]
+      interval: 10s
+      timeout: 5s
+      retries: 15
+      start_period: 60s
+    networks:
+      - cooking-net
+
+  # ---------------- 后端 Express ----------------
+  # 默认不启动（挂 profile），因为容器跑起来就没法本机断点调试；
+  # 且 BE-001 之前 04-backend/server 里还没有 package.json / Dockerfile，直接 build 会失败。
+  server:
+    profiles: ['full']
+    # Dockerfile 由后端在 BE-001 提供；约定内容见 06-devops/deploy.md「容器化部署」
+    build:
+      context: ../04-backend/server
+      dockerfile: Dockerfile
+    container_name: cooking-server
+    restart: unless-stopped
+    ports:
+      - '3000:3000'
+    depends_on:
+      mysql:
+        condition: service_healthy
+    env_file:
+      - .env
+    environment:
+      # 容器内覆盖：连 compose 里的 mysql 服务，用容器内部端口 3306
+      NODE_ENV: production
+      DB_HOST: mysql
+      DB_PORT: 3306
+      UPLOAD_DIR: /app/uploads
+      LOG_DIR: /app/logs
+    volumes:
+      # 上传图片与日志落盘，容器删了数据还在
+      - ../04-backend/server/uploads:/app/uploads
+      - ../04-backend/server/logs:/app/logs
+    networks:
+      - cooking-net
+
+volumes:
+  mysql-data:
+    name: cooking-mysql-data
+
+networks:
+  cooking-net:
+    name: cooking-net

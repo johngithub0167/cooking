@@ -1,0 +1,23 @@
+# ===========================================
+# cooking 项目 .gitattributes（OPS-001）
+# 目的：Windows 开发环境下统一换行符，避免脚本执行失败
+# ===========================================
+
+# 默认：入库统一为 LF
+* text=auto eol=lf
+
+# Windows 脚本必须保持 CRLF，否则双击 / powershell 执行异常
+*.ps1 text eol=crlf
+*.cmd text eol=crlf
+*.bat text eol=crlf
+
+# Shell 脚本必须保持 LF
+*.sh text eol=lf
+
+# 二进制文件不做换行转换
+*.png binary
+*.jpg binary
+*.jpeg binary
+*.gif binary
+*.webp binary
+*.ico binary

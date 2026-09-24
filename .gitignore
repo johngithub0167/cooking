@@ -1,0 +1,58 @@
+# ===========================================
+# cooking 项目 .gitignore（OPS-001）
+# 原则：依赖、真实配置、运行时产物一律不入库
+# ===========================================
+
+# ---------- 依赖 ----------
+node_modules/
+.pnp/
+.pnp.js
+
+# ---------- 环境变量（含真实密码 / Token，严禁入库）----------
+# .env 为真实配置（06-devops/.env 与 04-backend/server/.env），只留模板 .env.example 入库
+.env
+.env.local
+.env.*.local
+!.env.example
+
+# ---------- 运行时产物：上传图片 ----------
+# 必须写成 **/uploads/*：只写 uploads/* 时因为带斜杠，会被锚定到仓库根，
+# 匹配不到 04-backend/server/uploads/ 这种子目录，文件就会被误提交（踩过）。
+# 只忽略目录内容，保留 .gitkeep 占位，保证空目录能被提交
+**/uploads/*
+!**/uploads/.gitkeep
+
+# ---------- 运行时产物：日志 ----------
+# 同理用 **/logs/*，覆盖 06-devops/logs/ 等任意层级的日志目录
+**/logs/*
+!**/logs/.gitkeep
+*.log
+*.err
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+
+# ---------- 构建产物 ----------
+dist/
+build/
+.cache/
+.temp/
+.tmp/
+
+# ---------- 测试覆盖率 ----------
+coverage/
+.nyc_output/
+
+# ---------- Docker 本地数据卷（MySQL 数据文件）----------
+mysql-data/
+
+# ---------- 数据库备份（含真实业务数据与管理员账号，严禁入库）----------
+06-devops/backups/
+
+# ---------- 编辑器 / 系统 ----------
+.DS_Store
+Thumbs.db
+desktop.ini
+.idea/
+.vscode/
+*.swp
