@@ -18,8 +18,19 @@
 
 ### 下一步
 
-1. 后端 BE-011 菜品接口（依赖 BE-010 的 Category 模型；需补 Dish / Ingredient / DishIngredient 模型）。
-2. 之后依次推进 BE-012~015 → C 端 FE-010~017 / 后台 AD-013~016 → TEST-001~006 → DELIVERY-001。
+### BE-011 菜品接口 + AD-013/014 菜品管理页（2026-11-25 完成并验证）
+
+- BE-011：补 `dish.js` / `ingredient.js` / `dishIngredient.js` 模型并追加 `models/index.js` 导出，新增 `adminDishes.js` / `adminIngredients.js` 路由 + controller/service；实现后台菜品增删改查、上下架、分页筛选（分类/状态/关键词）、`includeDeleted`，食材联想（≤20 条），新增菜品时不存在食材自动创建。
+- 工作区曾因后端 agent 误判"Docker/数据库未启动"卡住，复核确认容器 `cooking-mysql` healthy、3307/3000 正常，`/api/health` 返回 `db=up`，已回复提示词让其继续。
+- 发现代码未实现文档约定的 `page`/`pageSize` 默认值（不传报 500 `NaN`），已在 AD-013 提示词中要求前端显式传参，属可接受的已知缺口，未改后端。
+- 查询类接口已由 WorkBuddy 用真实登录 Token 验证通过：列表 30 条、分类筛选 8 条、状态筛选、关键词"鸡蛋" 7 条、详情含 2 食材、食材联想"蛋"→鸡蛋。
+- AD-013/014：`Dishes.vue` + `api/dishes.js`，列表（分页/分类/状态/关键词筛选、上下架、删除二次确认）+ 新增/编辑弹窗（含食材联想与手输新名），用户已在浏览器验证增删改查全链路无问题。
+- 任务板 BE-011、AD-013、AD-014 均标记已完成。
+
+### 下一步
+
+1. 后端 BE-012 图片上传接口（独立依赖 BE-001，可先做）或 BE-013 菜品查询接口（C 端数据依赖，做完后才能动 FE-010~013）。
+2. 之后依次推进 BE-014/015 → C 端 FE-010~017 / 后台 AD-015/016 → TEST-001~006 → DELIVERY-001。
 
 ## 2026-09-25
 
