@@ -16,8 +16,6 @@
 - 用户已在浏览器验证：C 端裸开 `GET /api/categories` 返回 4 个分类（HTTP 200），后台登录后增删改查全链路无问题。
 - 任务板 BE-010、AD-012 均标记已完成。
 
-### 下一步
-
 ### BE-011 菜品接口 + AD-013/014 菜品管理页（2026-11-25 完成并验证）
 
 - BE-011：补 `dish.js` / `ingredient.js` / `dishIngredient.js` 模型并追加 `models/index.js` 导出，新增 `adminDishes.js` / `adminIngredients.js` 路由 + controller/service；实现后台菜品增删改查、上下架、分页筛选（分类/状态/关键词）、`includeDeleted`，食材联想（≤20 条），新增菜品时不存在食材自动创建。
@@ -27,10 +25,27 @@
 - AD-013/014：`Dishes.vue` + `api/dishes.js`，列表（分页/分类/状态/关键词筛选、上下架、删除二次确认）+ 新增/编辑弹窗（含食材联想与手输新名），用户已在浏览器验证增删改查全链路无问题。
 - 任务板 BE-011、AD-013、AD-014 均标记已完成。
 
+### BE-013 C 端菜品查询接口（2026-11-25 完成并验证）
+
+- 新增 `routes/dishes.js` + `controllers/dishController.js` + `services/dishService.js`，挂载于 `routes/index.js`；免 JWT 鉴权，C 端 `GET /api/dishes` 与 `GET /api/dishes/:id`。
+- 只返回 `deleted_at IS NULL AND status=1`，按 sort 升序 / id 降序；keyword 同时匹配菜名与食材名；返回字段按文档 2.2，不含内部字段。
+- 已实现 `page`/`pageSize` 默认值（1/20），未重犯 BE-011 的缺口。
+- WorkBuddy 验证全通过：默认参数 page=1/pageSize=20/total=30、分类筛选 categoryId=1 得 8 条、关键词"鸡蛋" 7 条 / "面粉"（食材）1 条、详情 id=1 含 2 食材、不存在 id 返回 404/2001。
+- 任务板 BE-013 标记已完成。
+
 ### 下一步
 
-1. 后端 BE-012 图片上传接口（独立依赖 BE-001，可先做）或 BE-013 菜品查询接口（C 端数据依赖，做完后才能动 FE-010~013）。
-2. 之后依次推进 BE-014/015 → C 端 FE-010~017 / 后台 AD-015/016 → TEST-001~006 → DELIVERY-001。
+### FE-011 总菜单页 + FE-012 搜索（2026-11-26 完成并验证）
+
+- 新增 `mobile/src/api/dishes.js` + `categories.js`；`main.js` 注册 Vant 的 Search/List/PullRefresh/Stepper/Tag/Icon/Image 组件。
+- `Menu.vue`：分类筛选（C 端 `/api/categories`）、`van-search` 关键词（300ms 防抖，FE-012）、`van-list` 上拉加载分页 + 空状态、菜品卡片（图片 null 时占位图）、加入菜单（`cart/addItem`）、已在菜单直接增减（`cart/increase`/`decrease`）、底部固定"已选 N 项"入口跳 `/today`。
+- 用户已在浏览器验证通过。任务板 FE-011、FE-012 标记已完成。
+
+### 下一步
+
+1. C 端 FE-013 菜品详情页（依赖 BE-013 详情接口已就绪），或 FE-014 今日菜单页（纯前端 + cart store，无新接口依赖）。
+2. 后端可并行：BE-012 图片上传（独立）、BE-014 推荐（供 FE-010 首页）、BE-015 菜单记录（供 FE-015/016、AD-016）。
+3. 之后 FE-010 / FE-015~017 → AD-015/016 → TEST-001~006 → DELIVERY-001。
 
 ## 2026-09-25
 
