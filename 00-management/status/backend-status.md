@@ -143,3 +143,38 @@ BE-003 已完成（等待用户验证）；BE-001~003 全部完成，等待进�
 建议下一步：
   BE-004 管理员鉴权（登录、Token、中间件）；或按你的安排先补 src/models/* 模型定义
 ```
+
+### BE-016 种子数据 + BE-004 管理员鉴权（2026-09-25）
+
+```text
+任务编号：BE-016、BE-004
+完成内容：
+  - BE-016 新增可重复执行的初始 seed：4 个分类、30 道家常菜、43 种食材、65 条菜品-食材关联。
+  - BE-016 从 .env 读取管理员初始账号密码，使用 bcryptjs 哈希后创建管理员；不预置菜单记录。
+  - BE-004 新增 Admin 模型，默认查询排除 password_hash，并提供 withPassword 作用域。
+  - BE-004 新增 POST /api/admin/login、GET /api/admin/profile。
+  - 新增 JWT Bearer auth 中间件、express-validator 参数校验、管理员 service/controller/route。
+  - 登录更新 last_login_at；Token 有效期从 JWT_EXPIRES_IN 读取，密钥从 JWT_SECRET 读取。
+修改/新增文件：
+  04-backend/server/src/seeders/20260925020000-seed-initial-data.js
+  04-backend/server/src/models/admin.js
+  04-backend/server/src/middlewares/{auth,validator}.js
+  04-backend/server/src/services/adminService.js
+  04-backend/server/src/controllers/adminController.js
+  04-backend/server/src/routes/admin.js
+  04-backend/server/src/routes/index.js
+  04-backend/server/package.json
+  04-backend/server/package-lock.json
+验证方式：
+  npm run seed
+  node -e 核验 categories/dishes/ingredients/dish_ingredients/admins/menu_records 数量
+  临时端口启动 node src/server.js，HTTP 验证登录、profile、无 Token
+验证结果：
+  - 数据库核验：categories=4、dishes=30、ingredients=43、dish_ingredients=65、admins=1、menu_records=0。
+  - BE-004 HTTP：登录 code=0，profile code=0、username=admin，无 Token HTTP 401。
+  - 静态诊断无错误或警告。
+未解决问题 / 待确认：
+  - 无。
+建议下一步：
+  - 进入 BE-010 分类接口或按项目负责人安排继续。
+```

@@ -59,11 +59,18 @@
 | 原问题 | Node 21.7.3 下的 `Fatal process out of memory: Zone` 已消失；当前仅保留 Webpack 体积/性能建议警告 |
 | 切换命令 | `nvm list`、`nvm use 20.19.5`、`nvm current` |
 
+### BE-016 种子数据与 BE-004 管理员鉴权（2026-09-25）
+
+| 任务 | 结果 |
+| --- | --- |
+| BE-016 | `npm run seed` 成功；4 个分类、30 道菜、43 种食材、65 条关联、1 个管理员，菜单记录 0 条 |
+| BE-004 | `POST /api/admin/login` 登录成功；`GET /api/admin/profile` JWT 验证成功；无 Token 返回 HTTP 401 / code 1001 |
+| 依赖 | 新增 bcryptjs、express-validator、jsonwebtoken；敏感配置仍从 `.env` 读取 |
+
 ### 下一步
 
-1. FE-003 统一请求层与错误提示（如需拆分 C 端与后台请求实现）；
-2. BE-004 管理员鉴权与 Token 接口；
-3. 后端接口 BE-010~016 → C 端页面 FE-010~017 / 后台页面 AD-010~016 → 测试 TEST-001~006 → 交付 DELIVERY-001。
+1. 后端接口 BE-010~015 → C 端页面 FE-010~017 / 后台页面 AD-010~016；
+2. 测试 TEST-001~006 → 交付 DELIVERY-001。
 
 ## 2026-09-24
 
