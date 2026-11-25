@@ -49,9 +49,26 @@
 
 ### 下一步
 
-1. C 端 FE-013 菜品详情页（依赖 BE-013 详情接口已就绪）——纯前端可做。
-2. 后端需并行推进：BE-015 菜单记录接口（解锁 FE-015 提交页 / FE-016 历史页 / AD-016 点菜记录页）、BE-014 推荐接口（解锁 FE-010 首页推荐）。
-3. 之后 FE-010 / FE-015~017 → AD-015/016 → TEST-001~006 → DELIVERY-001。
+### BE-015 菜单记录接口 + BE-014 推荐接口（2026-11-26 交付）
+
+- BE-015 已交付并验证通过：补 `menuRecord.js` / `menuItem.js` 模型 + `models/index.js` 导出，新增 C 端 `menus.js`（POST/列表/详情）与后台 `adminMenus.js`（列表/详情）+ controller/service。
+  - WorkBuddy 验证：创建菜单（2 项/3 份，返回 id、mealDate、itemCount）、历史列表（preview 2 项）、详情（含完整 items）、无效菜品返回 400/1000「菜品 #99999 不可用」、默认分页 page=1/pageSize=20 均通过。
+  - 任务板 BE-015 标记已完成。
+- BE-014 已交付并修复验证通过：新增 `recommendations.js` 路由 + controller/service + `utils/seedRandom.js`，推荐默认/size=1/分类分散/当天种子随机均正常。首验发现 `exclude` 参数失效——路由用 `customSanitizer` 把 `exclude` 解析成数组交给 controller，controller 却读 `req.query.excludeIds`：传 `exclude=15,3` 不生效、传 `excludeIds=15,3` 报 500。已将 controller 改读 `req.query.exclude` 并复验：exclude=28,3 结果不再含 28/3、excludeIds 旧参数不再报错、size=1 正常。任务板 BE-014 标记已完成。
+
+### 下一步
+
+### FE-015 提交菜单与成功页（2026-11-26 完成并验证）
+
+- 新增 `Submit.vue`（菜单清单 + 备注 ≤200 字，调 POST /api/menus，**接口成功后才 cart/clear**、失败保留可重试）、`Success.vue`（按路由 id 调 GET /api/menus/:id 展示摘要，含「查看历史」「再点菜」入口）、`api/menus.js`（createMenu/listMenus/getMenu），`router` 注册 `/submit`、`/success/:id`，`main.js` 注册 Vant Field/Loading。
+- 用户已通过页面提交验证：数据库新增菜单记录 #14（2026-11-26，3 份，非 WorkBuddy 验证时的 #12）。点菜闭环「总菜单→今日菜单→提交→成功」打通。
+- 任务板 FE-015 标记已完成。
+
+### 下一步
+
+1. C 端 FE-010 首页推荐（BE-014 已修复，可验换一批）、FE-013 详情页、FE-016 历史页——依赖全部就绪。
+2. 后端补 BE-012 图片上传（供 AD-015 上传组件、菜品封面/缩略图）。
+3. 之后 FE-017 → AD-015/016 → TEST-001~006 → DELIVERY-001。
 
 ## 2026-09-25
 

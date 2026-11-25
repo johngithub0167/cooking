@@ -5,6 +5,7 @@ const adminController = require('../controllers/adminController');
 const adminCategoryRoutes = require('./adminCategories');
 const adminDishRoutes = require('./adminDishes');
 const adminIngredientRoutes = require('./adminIngredients');
+const adminMenuRoutes = require('./adminMenus');
 const auth = require('../middlewares/auth');
 const validate = require('../middlewares/validator');
 
@@ -20,5 +21,6 @@ router.get('/profile', auth, adminController.profile);
 router.use('/categories', adminCategoryRoutes);
 router.use('/dishes', adminDishRoutes);
 router.use('/ingredients', adminIngredientRoutes);
+router.use('/menus', adminMenuRoutes);
 
 module.exports = router;

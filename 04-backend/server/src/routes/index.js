@@ -16,6 +16,8 @@ const healthRoutes = require('./health');
 const adminRoutes = require('./admin');
 const categoryRoutes = require('./categories');
 const dishRoutes = require('./dishes');
+const menuRoutes = require('./menus');
+const recommendRoutes = require('./recommendations');
 
 const router = express.Router();
 
@@ -23,5 +25,7 @@ router.use('/health', healthRoutes);
 router.use('/admin', adminRoutes);
 router.use('/categories', categoryRoutes);
 router.use('/dishes', dishRoutes);
+router.use('/menus', menuRoutes);
+router.use('/recommendations', recommendRoutes);
 
 module.exports = router;

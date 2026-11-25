@@ -4,7 +4,7 @@ import router from './router'
 import store from './store'
 import {
   Button, Cell, Empty, NavBar, Tabbar, TabbarItem, Toast,
-  Search, List, PullRefresh, Stepper, Tag, Icon, Image as VanImage, Dialog
+  Search, List, PullRefresh, Stepper, Tag, Icon, Image as VanImage, Dialog, Field, Loading
 } from 'vant'
 import 'vant/lib/index.css'
 import './styles/base.css'
@@ -26,6 +26,8 @@ Vue.use(Tag)
 Vue.use(Icon)
 Vue.use(VanImage)
 Vue.use(Dialog)
+Vue.use(Field)
+Vue.use(Loading)
 
 new Vue({
   router,

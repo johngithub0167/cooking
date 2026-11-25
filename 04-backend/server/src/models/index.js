@@ -10,6 +10,8 @@ const Category = require('./category');
 const Dish = require('./dish');
 const Ingredient = require('./ingredient');
 const DishIngredient = require('./dishIngredient');
+const MenuRecord = require('./menuRecord');
+const MenuItem = require('./menuItem');
 
 // ---- 关联定义 ----
 // 菜品属于分类（分类删除后 category_id 置 NULL，由数据库外键保证）
@@ -24,6 +26,10 @@ Ingredient.belongsToMany(Dish, { through: DishIngredient, foreignKey: 'ingredien
 Dish.hasMany(DishIngredient, { foreignKey: 'dishId', sourceKey: 'id' });
 DishIngredient.belongsTo(Ingredient, { foreignKey: 'ingredientId', targetKey: 'id' });
 
+// 菜单记录 → 明细（dish_id 不建外键关联，菜品删除后历史仍可读）
+MenuRecord.hasMany(MenuItem, { foreignKey: 'recordId', sourceKey: 'id' });
+MenuItem.belongsTo(MenuRecord, { foreignKey: 'recordId', targetKey: 'id' });
+
 module.exports = {
   sequelize,
   Sequelize,
@@ -31,5 +37,7 @@ module.exports = {
   Category,
   Dish,
   Ingredient,
-  DishIngredient
+  DishIngredient,
+  MenuRecord,
+  MenuItem
 };
