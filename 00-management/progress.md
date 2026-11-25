@@ -1,5 +1,26 @@
 # 项目进度
 
+## 2026-11-25
+
+### ARCH-005 技术方案卡点关闭
+
+- 技术方案 v1.0（架构 / 7 张表结构 / 15 个接口字段 / 环境变量模板）自 2026-09-24 产出后，实现已全程按此执行，未改动任何已冻结字段。
+- 用户确认按既定方案继续执行，ARCH-005「用户评审并冻结技术方案」标记为**已完成**，`02-design/technical-architecture.md` 状态同步更新为「已确认冻结」。
+- 当前阶段：工程初始化完成；后端业务接口 BE-010~015、C 端 FE-010~017、后台 AD-010~016、测试与交付尚未开始。
+- 代码已在 2026-09-25 全部提交（最近提交 `61288b6 update`，15 个文件），工作区干净。
+
+### BE-010 分类接口 + AD-012 分类管理页（2026-11-25 完成并验证）
+
+- BE-010：补 `src/models/category.js` 与 `src/models/index.js`（统一加载入口），实现 C 端 `GET /api/categories`（仅启用、按 sort 升序）与后台 `/api/admin/categories` 的 GET/POST/PUT/DELETE（JWT 鉴权、名称唯一 2002、删除返回 affectedDishes）。
+- AD-012：`03-frontend/admin/src/pages/Categories.vue` + `src/api/categories.js`，列表（含加载失败重试/空状态）、新增/编辑弹窗、删除二次确认与影响提示。
+- 用户已在浏览器验证：C 端裸开 `GET /api/categories` 返回 4 个分类（HTTP 200），后台登录后增删改查全链路无问题。
+- 任务板 BE-010、AD-012 均标记已完成。
+
+### 下一步
+
+1. 后端 BE-011 菜品接口（依赖 BE-010 的 Category 模型；需补 Dish / Ingredient / DishIngredient 模型）。
+2. 之后依次推进 BE-012~015 → C 端 FE-010~017 / 后台 AD-013~016 → TEST-001~006 → DELIVERY-001。
+
 ## 2026-09-25
 
 ### 运维收口（OPS-010 / 011 / 012 / 013 完成）
@@ -25,7 +46,7 @@
 
 - 运维侧（OPS-001~004、010~013）**全部完成**，可在 Windows 上一键拉起整套服务（后端 3000 + MySQL 容器 3307）。
 - 仓库已 `git init`（`main`）并完成**首次提交 `9e31ba4`**（48 个文件）；`git status` 干净，`git ls-files` 复查无 `.env` / `node_modules` / `uploads` / `logs` / `backups` 入库。远端未关联，需要时自行 `git remote add origin <地址>` + `git push -u origin main`（脚本不代劳）。
-- 技术方案（ARCH-005）仍待用户评审；BE-001~003 已完成，FE-001/FE-002 已开发并通过用户验收；已安装 NVM for Windows 并切换 Node 20.19.5 LTS，FE-001/FE-002 生产构建复测通过。后端 Dockerfile 落地后可启用 `docker-compose.yml` 的 `full` profile。
+- ~~技术方案（ARCH-005）仍待用户评审~~（已于 2026-11-25 确认冻结并关闭，见文首记录）；BE-001~003 已完成，FE-001/FE-002 已开发并通过用户验收；已安装 NVM for Windows 并切换 Node 20.19.5 LTS，FE-001/FE-002 生产构建复测通过。后端 Dockerfile 落地后可启用 `docker-compose.yml` 的 `full` profile。
 
 ### FE-001 C 端工程初始化（已验收）
 
@@ -159,7 +180,7 @@
 - ~~**本机未安装 MySQL**~~ → 已解决：Docker 容器 `cooking-mysql`（MySQL 8）已 healthy，宿主 3307 → 容器 3306。
 - Node 实测 **v21.7.3**，架构要求 18/20 LTS（风险 T-03）；脚本仅告警不阻断，遇 `ERR_OSSL_EVP_UNSUPPORTED` 加 `-LegacyOpenSsl`。admin 生产构建已受本机 Node 内存异常影响，建议统一到 Node 18/20 LTS。
 - sharp（图片缩略图）在 Windows 上可能安装失败，已设计降级方案。
-- ARCH-005（技术方案评审）未正式签字，但实际已按方案开工，建议补一次快速确认或直接关闭该卡点。
+- ~~ARCH-005（技术方案评审）未正式签字，但实际已按方案开工，建议补一次快速确认或直接关闭该卡点。~~ **已于 2026-11-25 解决（D-017，卡点关闭）。**
 
 ## 2026-09-25 工程初始化完成（Gate 1）
 

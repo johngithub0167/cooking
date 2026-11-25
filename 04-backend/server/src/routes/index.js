@@ -14,10 +14,12 @@ const express = require('express');
 
 const healthRoutes = require('./health');
 const adminRoutes = require('./admin');
+const categoryRoutes = require('./categories');
 
 const router = express.Router();
 
 router.use('/health', healthRoutes);
 router.use('/admin', adminRoutes);
+router.use('/categories', categoryRoutes);
 
 module.exports = router;

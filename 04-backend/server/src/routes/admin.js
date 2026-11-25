@@ -2,6 +2,7 @@ const express = require('express');
 const { body } = require('express-validator');
 
 const adminController = require('../controllers/adminController');
+const adminCategoryRoutes = require('./adminCategories');
 const auth = require('../middlewares/auth');
 const validate = require('../middlewares/validator');
 
@@ -14,5 +15,6 @@ router.post('/login',
   adminController.login
 );
 router.get('/profile', auth, adminController.profile);
+router.use('/categories', adminCategoryRoutes);
 
 module.exports = router;
